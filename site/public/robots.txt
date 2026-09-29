@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://oauthlint.dev/sitemap-index.xml

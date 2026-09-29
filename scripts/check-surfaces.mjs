@@ -23,7 +23,7 @@
  * When a new coverage lands (PHP, Ruby, ...), add the term to MUST_MENTION and
  * every surface is forced to advertise it. The count auto-tracks the real pack.
  */
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadAllRules } from '../rules/dist/loader.js';
@@ -32,12 +32,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(root, p), 'utf8');
 
 // Surfaces that state a rounded "N+ rules" figure.
-const COUNT_SURFACES = [
-  'README.md',
-  'cli/README.md',
-  'vscode/README.md',
-  'site/src/html/index.html',
-];
+const COUNT_SURFACES = ['README.md', 'cli/README.md', 'vscode/README.md'];
 
 // Surfaces whose coverage copy must advertise every current domain.
 const COVERAGE_SURFACES = [
@@ -48,8 +43,6 @@ const COVERAGE_SURFACES = [
   'rules/README.md',
   'action/README.md',
   'jetbrains/src/main/resources/META-INF/plugin.xml',
-  'site/src/html/index.html',
-  'site/src/layouts/Base.astro',
 ];
 
 // Differentiating CAPABILITY terms that must appear on every surface above.
@@ -95,32 +88,8 @@ for (const f of COVERAGE_SURFACES) {
   }
 }
 
-// 3) The site announcement bar must advertise the latest PUBLISHED release, never a
-//    version that is not out yet. `main` can carry prepared-but-unpublished version
-//    bumps (a "version packages" commit merged before publishing), so the banner may
-//    LAG the package version, but it must never be AHEAD of it: a banner ahead of the
-//    package points at a release that does not exist (a 404 link). The release process
-//    bumps the banner to the new version at publish time.
-const cliVersion = JSON.parse(read('cli/package.json')).version; // e.g. 0.16.0
-const expectedAnnounce = `v${cliVersion.split('.').slice(0, 2).join('.')}`; // v0.16
-const annSrc = read('site/src/data/announcement.ts');
-const annHidden = /export const announcement[^=]*=\s*null/.test(annSrc);
-const annVer = annSrc.match(/version:\s*['"]([^'"]+)['"]/)?.[1];
-const minorTuple = (v) => v.replace(/^v/, '').split('.').map(Number);
-if (annHidden) {
-  passes.push('announcement bar: hidden (no release advertised)');
-} else if (!annVer) {
-  problems.push('site/src/data/announcement.ts: no announcement version found');
-} else {
-  const [aMaj, aMin] = minorTuple(annVer);
-  const [pMaj, pMin] = minorTuple(expectedAnnounce);
-  const ahead = aMaj > pMaj || (aMaj === pMaj && aMin > pMin);
-  if (ahead)
-    problems.push(
-      `site announcement bar advertises "${annVer}", ahead of the prepared version "${expectedAnnounce}" (CLI ${cliVersion}): it points at a release that is not published yet`,
-    );
-  else passes.push(`announcement bar: ${annVer} (published; prepared ${expectedAnnounce})`);
-}
+// 3) (Removed) The site announcement-bar freshness check moved to the website
+//    repo (OAuthLint/web) when the marketing site + docs were extracted there.
 
 // 4) Every language in the pack must appear in the two CANONICAL exhaustive lists:
 //    the README "Language support" table and the docs per-language bundle table.
@@ -150,7 +119,7 @@ const LANG_DISPLAY = {
 const packLangs = [...new Set(loaded.flatMap((x) => x.rule.languages))]
   .filter((l) => LANG_DISPLAY[l])
   .sort();
-const LANGUAGE_SURFACES = ['README.md', 'site/src/pages/docs/semgrep.md'];
+const LANGUAGE_SURFACES = ['README.md'];
 for (const f of LANGUAGE_SURFACES) {
   const body = read(f);
   for (const l of packLangs) {
@@ -162,16 +131,8 @@ for (const f of LANGUAGE_SURFACES) {
   }
 }
 
-// 5) Every language in the pack ships a hosted per-language Semgrep bundle.
-//    (Catches a language added to the pack but forgotten in LANGUAGE_SUBSETS.)
-for (const l of packLangs) {
-  const bundle = `site/public/r/oauthlint-${l}.yaml`;
-  if (existsSync(join(root, bundle))) passes.push(`bundle: oauthlint-${l}.yaml`);
-  else
-    problems.push(
-      `no per-language bundle for ${l} (expected ${bundle}); add "${l}" to LANGUAGE_SUBSETS in site/scripts/build-semgrep-config.ts and rebuild the site`,
-    );
-}
+// 5) (Removed) The per-language hosted Semgrep-bundle check moved to the website
+//    repo (OAuthLint/web), which now generates and serves the bundles.
 
 // 6) No em-dashes (an AI-writing tell) in rule messages or user-facing prose. Keep the
 //    product's voice human: use a period, colon, comma, or parentheses instead.
@@ -185,15 +146,12 @@ const walk = (dir, exts, out = []) => {
 };
 const proseFiles = [
   ...walk('rules/rules', ['.yml']),
-  ...walk('site/src/pages', ['.md', '.astro']),
   'README.md',
   'cli/README.md',
   'rules/README.md',
   'vscode/README.md',
   'action/README.md',
   'mcp/README.md',
-  'site/src/html/index.html',
-  'site/src/layouts/Base.astro',
   // npm / marketplace manifests: their descriptions render on npmjs, the VS Code
   // and JetBrains marketplaces, and GitHub Marketplace, so they are prose too.
   'package.json',

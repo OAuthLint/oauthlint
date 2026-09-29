@@ -6,14 +6,14 @@
 
 A static-analysis linter with a curated, auth-only rule pack and **dataflow (taint) analysis** (JS/TS · Python · Go · Rust · Java · C#/.NET · PHP · Ruby · Kotlin, and growing) · CLI + GitHub Action + VS Code extension · free & MIT licensed
 
-[![CI](https://img.shields.io/github/actions/workflow/status/Auspeo/oauthlint/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/Auspeo/oauthlint/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/OAuthLint/oauthlint/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/OAuthLint/oauthlint/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/oauthlint.svg?style=flat-square)](https://www.npmjs.com/package/oauthlint)
 [![npm downloads](https://img.shields.io/npm/dm/oauthlint.svg?style=flat-square)](https://www.npmjs.com/package/oauthlint)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![VS Code Marketplace](https://img.shields.io/open-vsx/v/auspeo/oauthlint-vscode?style=flat-square&label=VS%20Code&color=2f6feb)](https://marketplace.visualstudio.com/items?itemName=auspeo.oauthlint-vscode)
 [![docs](https://img.shields.io/badge/docs-oauthlint.dev-2f6feb.svg?style=flat-square)](https://oauthlint.dev)
 [![powered by Semgrep](https://img.shields.io/badge/powered%20by-Semgrep-0a7d6b.svg?style=flat-square)](https://semgrep.dev)
-[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/Auspeo/oauthlint?style=flat-square&label=OpenSSF%20Scorecard)](https://securityscorecards.dev/viewer/?uri=github.com/Auspeo/oauthlint)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/OAuthLint/oauthlint?style=flat-square&label=OpenSSF%20Scorecard)](https://securityscorecards.dev/viewer/?uri=github.com/OAuthLint/oauthlint)
 
 </div>
 
@@ -104,13 +104,13 @@ Other commands: `oauthlint list` (browse rules), `oauthlint explain <rule-id>` (
 ### GitHub Action
 
 ```yaml
-- uses: Auspeo/oauthlint@v1
+- uses: OAuthLint/oauthlint@v1
   with:
     severity: HIGH
     fail-on: HIGH
 ```
 
-The Action is **Docker-based**, so it runs in any repository's CI regardless of the project's language. `Auspeo/oauthlint@v1` is the [GitHub Marketplace](https://github.com/marketplace) entrypoint; the original `Auspeo/oauthlint/action@v1` subpath still works and behaves identically. The SARIF output (`--format sarif`) uploads to [GitHub Code Scanning](https://oauthlint.dev/docs/code-scanning), and there's a recipe for [GitLab CI](https://oauthlint.dev/docs/gitlab-ci) too.
+The Action is **Docker-based**, so it runs in any repository's CI regardless of the project's language. `OAuthLint/oauthlint@v1` is the [GitHub Marketplace](https://github.com/marketplace) entrypoint; the original `OAuthLint/oauthlint/action@v1` subpath still works and behaves identically. The SARIF output (`--format sarif`) uploads to [GitHub Code Scanning](https://oauthlint.dev/docs/code-scanning), and there's a recipe for [GitLab CI](https://oauthlint.dev/docs/gitlab-ci) too.
 
 ### VS Code, Cursor, Windsurf, and other VS Code forks
 
@@ -176,7 +176,7 @@ oauthlint is built on [Semgrep](https://semgrep.dev), whose engine is **language
 | IaC / config auth (Terraform, GitHub Actions YAML, AWS IAM JSON) | ✅ shipping |
 | More (open an issue to request your stack) | 🔜 planned |
 
-**Why JS/TS first?** That's where AI coding tools generate the most code, and so the most OAuth/JWT bugs. It's the densest place to start, not the ceiling. Want your stack covered? [Open an issue](https://github.com/Auspeo/oauthlint/issues).
+**Why JS/TS first?** That's where AI coding tools generate the most code, and so the most OAuth/JWT bugs. It's the densest place to start, not the ceiling. Want your stack covered? [Open an issue](https://github.com/OAuthLint/oauthlint/issues).
 
 ## What's in this repo
 
@@ -197,10 +197,13 @@ pnpm test:run     # full suite: rule pack + CLI + Action + VS Code + scripts
 pnpm lint
 pnpm build
 pnpm typecheck
-pnpm --filter oauthlint-site dev     # preview the docs site locally
 ```
 
-**Adding a rule:** drop a YAML file in `rules/rules/<category>/`, add `vulnerable.ts` + `safe.ts` fixtures, and the schema-driven tests pick it up automatically. The docs site (`site/`) generates its rule pages straight from the rule pack, so no separate docs-refresh step is needed.
+The website, rule catalogue and documentation live in a separate repository,
+[OAuthLint/web](https://github.com/OAuthLint/web) (served at oauthlint.dev), and
+are generated from this rule pack.
+
+**Adding a rule:** drop a YAML file in `rules/rules/<category>/`, add `vulnerable.ts` + `safe.ts` fixtures, and the schema-driven tests pick it up automatically. The website ([OAuthLint/web](https://github.com/OAuthLint/web)) generates its rule pages straight from this rule pack, so no separate docs-refresh step is needed.
 
 ### Commits & releases
 
@@ -247,7 +250,7 @@ especially welcome.
 ## Contributing
 
 The most useful contribution is telling us when a rule is wrong: open a
-[false-positive issue](https://github.com/Auspeo/oauthlint/issues/new/choose).
+[false-positive issue](https://github.com/OAuthLint/oauthlint/issues/new/choose).
 Want a new anti-pattern caught, or want to write the rule yourself? See
 **[CONTRIBUTING.md](CONTRIBUTING.md)**. A rule is one YAML file plus a
 `vulnerable.ts` / `safe.ts` fixture pair. By participating you agree to the
@@ -255,4 +258,4 @@ Want a new anti-pattern caught, or want to write the rule yourself? See
 
 ## License
 
-MIT. See [LICENSE](LICENSE). Built and maintained by [Auspeo](https://github.com/Auspeo).
+MIT. See [LICENSE](LICENSE). Built and maintained by [Auspeo](https://oauthlint.dev).
