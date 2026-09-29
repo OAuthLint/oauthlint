@@ -17,9 +17,6 @@
       "rules/tests/fixtures/**",
       "benchmark/archive/**",
       "benchmark/results/**",
-      "site/.astro/**",
-      "site/dist/**",
-      "site/src/html/**",
       "design/_export/**"
     ]
   },

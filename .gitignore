@@ -65,3 +65,6 @@ benchmark/results/
 # Local-only notes / scratch (never committed)
 *.local.md
 .claude/
+
+# Astro build cache (must never be committed)
+**/.astro/
